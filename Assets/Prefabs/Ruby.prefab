@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6138123857883690958}
   - component: {fileID: 6138123857883690959}
-  - component: {fileID: 6138123857883690957}
   - component: {fileID: 499607065381892683}
   - component: {fileID: 4218571246669174656}
+  - component: {fileID: 6138123857883690957}
   m_Layer: 0
   m_Name: Ruby
   m_TagString: Untagged
@@ -84,18 +84,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
---- !u!114 &6138123857883690957
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6138123857883690944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f242b75e412517545b50b947ee7b93e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!50 &499607065381892683
 Rigidbody2D:
   serializedVersion: 4
@@ -111,12 +99,12 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &4218571246669174656
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -130,7 +118,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.63999975}
+  m_Offset: {x: -0.05815521, y: 0.5731213}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
@@ -141,5 +129,17 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.2806249, y: 1.28}
+  m_Size: {x: 0.6641808, y: 1.1462431}
   m_EdgeRadius: 0
+--- !u!114 &6138123857883690957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6138123857883690944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f242b75e412517545b50b947ee7b93e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
