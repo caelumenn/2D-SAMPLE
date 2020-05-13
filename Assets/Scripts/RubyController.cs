@@ -6,9 +6,10 @@ public class RubyController : MonoBehaviour
 {
     Rigidbody2D rigidbody2d;
     public int maxHealth = 5;
-    public float speed = 3.0f;
+    public float speed = 15.0f;
     int currentHealth;
-
+    public int health { get { return currentHealth; } }
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -32,7 +33,7 @@ public class RubyController : MonoBehaviour
         rigidbody2d.MovePosition(position);
     }
 
-    void ChangeHealth(int amount)
+    public void ChangeHealth(int amount)
     {
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
         Debug.Log(currentHealth + "/" + maxHealth);
