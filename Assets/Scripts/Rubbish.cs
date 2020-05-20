@@ -1,34 +1,40 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Pathfinding;
 
 public class Rubbish : MonoBehaviour
 {
-    private float startPosX;
-    private float startPosY;
-    private bool isBeingHeld = false;
-    public Vector2 speed = new Vector2(0, 0);
-    public Vector2 acceleration = new Vector2(0, 0);
-    
+    float startPosX;
+    float startPosY;
+    bool isBeingHeld = false;
+    AIPath path;
+    Rigidbody2D r2d;
 
     void Start()
     {
-        speed.Set(0, 0);
-        
+        path = GetComponent<AIPath>();
+        r2d = GetComponent<Rigidbody2D>();
     }
-
 
     void OnTriggerEnter2D(Collider2D other) 
     {
-        Debug.Log("collider");
-        
-        GetComponent<BoxCollider2D>().isTrigger = false;
+        if (other.tag.Equals("River"))
+        {
+            path.canMove = true;
+            path.canSearch = true;
+            r2d.gravityScale = 0;
+        }
+        else
+        {
+            path.canMove = false;
+            path.canSearch = false;
+            GetComponent<BoxCollider2D>().isTrigger = false;
+        }
     }
  
     void Update()
     {
-        speed += acceleration * Time.deltaTime;
-
         if (isBeingHeld) 
         {
             Vector3 mousePos;
@@ -40,15 +46,18 @@ public class Rubbish : MonoBehaviour
         }
         else
         {
-            Vector2 position = transform.position;
-            position += speed * Time.deltaTime;
-            transform.position = position;
+            //Vector2 position = transform.position;
+            //position += speed * Time.deltaTime;
+            //transform.position = position;
         }
     }
 
     private void OnMouseDown()
     {
         if (Input.GetMouseButtonDown(0)) {
+            path.canMove = false;
+            path.canSearch = false;
+
             Vector3 mousePos;
             mousePos = Input.mousePosition;
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
@@ -63,6 +72,7 @@ public class Rubbish : MonoBehaviour
     private void OnMouseUp()
     {
         isBeingHeld = false;
+        r2d.gravityScale = 1;
     }
 
 }
