@@ -5,30 +5,59 @@ using Pathfinding;
 
 public class Rubbish : MonoBehaviour
 {
+    public string type;
     float startPosX;
     float startPosY;
     bool isBeingHeld = false;
     AIPath path;
     Rigidbody2D r2d;
-
+    GameLogic game;
+    
+    
     void Start()
     {
         path = GetComponent<AIPath>();
         r2d = GetComponent<Rigidbody2D>();
+        game = GameObject.Find("GameLogic").GetComponent<GameLogic>();
+        GetComponent<BoxCollider2D>().isTrigger = false;
     }
 
     void OnTriggerEnter2D(Collider2D other) 
     {
-        if (other.tag.Equals("River"))
+        if (other.tag.Equals("TrashBin"))
+        {
+            if (this.type.Equals(other.GetComponent<TrashBin>().type))
+            {
+                game.addScore(1);
+                Destroy(gameObject);
+            }
+            else
+            {
+                game.minScore();
+                Destroy(gameObject);
+            }
+
+        }
+        else if (other.tag.Equals("River"))
         {
             path.canMove = true;
             path.canSearch = true;
             r2d.gravityScale = 0;
+            GetComponent<BoxCollider2D>().isTrigger = false;
         }
-        else
+        else if (other.tag.Equals("Street"))
         {
             path.canMove = false;
             path.canSearch = false;
+            GetComponent<BoxCollider2D>().isTrigger = false;
+        }
+        else if (other.tag.Equals("End")) 
+        {
+            game.stuck++;
+            Destroy(gameObject);
+        }
+        else
+        {
             GetComponent<BoxCollider2D>().isTrigger = false;
         }
     }
@@ -44,20 +73,11 @@ public class Rubbish : MonoBehaviour
             this.gameObject.transform.localPosition = new Vector3(mousePos.x - startPosX, mousePos.y - startPosY, 0);
 
         }
-        else
-        {
-            //Vector2 position = transform.position;
-            //position += speed * Time.deltaTime;
-            //transform.position = position;
-        }
     }
 
-    private void OnMouseDown()
+    void OnMouseDown()
     {
         if (Input.GetMouseButtonDown(0)) {
-            path.canMove = false;
-            path.canSearch = false;
-
             Vector3 mousePos;
             mousePos = Input.mousePosition;
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
@@ -66,11 +86,15 @@ public class Rubbish : MonoBehaviour
             startPosY = mousePos.y - this.transform.localPosition.y;
 
             isBeingHeld = true;
+            GetComponent<BoxCollider2D>().isTrigger = false;
         }
     }
 
-    private void OnMouseUp()
+    void OnMouseUp()
     {
+        GetComponent<BoxCollider2D>().isTrigger = true;
+        path.canMove = false;
+        path.canSearch = false;
         isBeingHeld = false;
         r2d.gravityScale = 1;
     }

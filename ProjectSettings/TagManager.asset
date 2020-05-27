@@ -6,6 +6,9 @@ TagManager:
   tags:
   - River
   - Street
+  - Rubbish
+  - TrashBin
+  - End
   layers:
   - Default
   - TransparentFX
