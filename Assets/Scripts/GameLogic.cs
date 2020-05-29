@@ -35,6 +35,7 @@ public class GameLogic : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Application.targetFrameRate = 60;
         Time.timeScale = 1f;
         createRubbish();
     }
