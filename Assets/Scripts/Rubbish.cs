@@ -2,23 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
+using UnityEngine.UI;
 
 public class Rubbish : MonoBehaviour
 {
+    GameLogic game;
+
     public string type;
+    Text rubbish_name;
+
     float startPosX;
     float startPosY;
     bool isBeingHeld = false;
+
     AIPath path;
     Rigidbody2D r2d;
-    GameLogic game;
+
     
-    
+     
     void Start()
     {
+        game = GameObject.Find("GameLogic").GetComponent<GameLogic>();
+        rubbish_name = GameObject.Find(gameObject.name + "/Canvas/Name").GetComponent<Text>();
+        rubbish_name.text = gameObject.name;
+
         path = GetComponent<AIPath>();
         r2d = GetComponent<Rigidbody2D>();
-        game = GameObject.Find("GameLogic").GetComponent<GameLogic>();
         GetComponent<BoxCollider2D>().isTrigger = false;
     }
 
@@ -84,9 +93,10 @@ public class Rubbish : MonoBehaviour
 
             startPosX = mousePos.x - this.transform.localPosition.x;
             startPosY = mousePos.y - this.transform.localPosition.y;
-
+      
             isBeingHeld = true;
             GetComponent<BoxCollider2D>().isTrigger = false;
+            rubbish_name.enabled = true;
         }
     }
 
@@ -97,6 +107,7 @@ public class Rubbish : MonoBehaviour
         path.canSearch = false;
         isBeingHeld = false;
         r2d.gravityScale = 1;
+        rubbish_name.enabled = false;
     }
 
 }
