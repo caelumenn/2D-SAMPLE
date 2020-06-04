@@ -43,6 +43,7 @@ public class Rubbish : MonoBehaviour
             else
             {
                 game.minScore();
+                game.addWrongResult(this.name,this.type);
                 Destroy(gameObject);
             }
 

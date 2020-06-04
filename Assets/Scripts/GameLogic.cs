@@ -11,15 +11,10 @@ public class GameLogic : MonoBehaviour
 
     public Text ui_time;
     public Text ui_score;
+    public Text page;
     public GameObject pauseMenu;
     public GameObject startMenu;
     public GameObject result;
-    public GameObject next_page_button;
-    public GameObject pre_page_button;
-    public GameObject restart_button;
-    public GameObject result_button;
-    public GameObject back_button;
-    public GameObject quit_button;
     public GameObject rubbish_prefab;
 
     public int stuck = 0;
@@ -29,19 +24,16 @@ public class GameLogic : MonoBehaviour
     string[] rubbish_type = { "card paper", "metal plastic glass", "compost" };
     Color[] rubbish_color = { new Color(0.75f, 0.0f, 0.0f, 1.0f), new Color(1.0f, 1.0f, 1.0f, 1.0f), new Color(0.4f, 0.0f, 0.0f, 1.0f) };
 
+    int current_page = 1;
     int score = 0;
     float time = 60.0f;
-    float re_time = 3.0f;
+    float re_time = 1.5f;
     bool isGameOver = false;
     OrderedDictionary wrong_result = new OrderedDictionary();
 
     // Start is called before the first frame update
     void Start()
     {
-        addWrongResult("1", "2");
-        addWrongResult("2", "3");
-        addWrongResult("4", "5");
-
         Application.targetFrameRate = 60;
         if (isRestart)
         {
@@ -59,6 +51,9 @@ public class GameLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        result.GetComponent<Text>().text = getResult();
+        page.text = current_page.ToString() +"/"+getAllPage().ToString();
+
         if (!isGameOver)
         {
             time -= Time.deltaTime;
@@ -120,10 +115,33 @@ public class GameLogic : MonoBehaviour
         }
     }
 
+    public void returnToPause() 
+    {
+        result.SetActive(false);
+        pauseMenu.SetActive(true);
+    }
     public void reStart()
     {
         isRestart = true;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void nextPage() 
+    {
+        current_page++;
+        if (current_page > getAllPage())
+        {
+            current_page = getAllPage();
+        }
+    }
+
+    public void prePage() 
+    {
+        current_page--;
+        if (current_page < 1)
+        {
+            current_page = 1;
+        }
     }
 
     public void startGame()
@@ -135,26 +153,41 @@ public class GameLogic : MonoBehaviour
 
     public void showResult()
     {
-        restart_button.SetActive(false);
-        result_button.SetActive(false);
-        quit_button.SetActive(false);
+        pauseMenu.SetActive(false);
         result.SetActive(true);
-        result.GetComponentInChildren<Text>().text = getResult();
     }
 
-    string getResult() 
+    string getResult()
     {
         string s_result = "You have gain " + score.ToString() + " marks,\n" +
-            "and here are the list of rubbishs you put in the wrong bin.\n";
-        if (wrong_result.Count < 10) 
+            "and here is the list of rubbishes you put in the wrong bin.\n";
+        string[] keys = new string[wrong_result.Count];
+        string[] values = new string[wrong_result.Count];
+        wrong_result.Keys.CopyTo(keys, 0);
+        wrong_result.Values.CopyTo(values, 0);
+
+
+        if (current_page < getAllPage())
         {
-            foreach (KeyValuePair<string, string> entry in wrong_result) 
+            for (int i = (current_page - 1) * 10; i <= current_page * 10 - 1; i++)
             {
-                s_result += entry.Key + " should be put in " + entry.Value + " bin.\n";
+                s_result += keys[i] + " should be put in " + values[i] + " bin.\n";
             }
         }
-        
-        
+        else //remember to keep current_page not larger than allpage
+        {
+            for (int i = (current_page - 1) * 10; i <= wrong_result.Count - 1; i++)
+            {
+                s_result += keys[i] + " should be put in " + values[i] + " bin.\n";
+            }
+        }
+
+
         return s_result;
+    }
+
+    int getAllPage() 
+    {
+        return (wrong_result.Count / 10) + 1;
     }
 }
