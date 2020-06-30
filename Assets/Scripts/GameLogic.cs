@@ -16,30 +16,47 @@ public class GameLogic : MonoBehaviour
     public GameObject startMenu;
     public GameObject result;
     public GameObject rubbish_prefab;
+    
 
-    public int stuck = 0;
-    public static bool isRestart = false;
 
-    int i = 0;
+
+    //For rubbish creat
+    Sprite[] sprites;
     string[] rubbish_type = { "card paper", "metal plastic glass", "compost" };
-    Color[] rubbish_color = { new Color(0.75f, 0.0f, 0.0f, 1.0f), new Color(1.0f, 1.0f, 1.0f, 1.0f), new Color(0.4f, 0.0f, 0.0f, 1.0f) };
+    string[] rubbish_name = {"water bottle","milk jug", "laundry soap bottle",
+                            "cardboard box", "newspaper", "brown bag",
+                            "green soda bottle", "mason jar","beer bottle",
+                            "small tuna can", "larger steel can", "red soda can",
+                            "ceramic coffee mug", "greasy pizza box", "polystyrene foam cup", "pressurized spray can"};
 
+    //For result page
     int current_page = 1;
-    int score = 0;
-    float time = 60.0f;
-    float re_time = 1.5f;
-    bool isGameOver = false;
     OrderedDictionary wrong_result = new OrderedDictionary();
+    
 
-    // Start is called before the first frame update
+    //For Game main logic
+    public int stuck = 0;
+
+    int score = 0;
+    int speed = 2;
+    int next_speed_level = 2;
+    float time = 60.0f;
+    float refresh_time = 1.5f;
+    float next_refresh = 3f;
+    bool isGameOver = false;
+    
+    static bool isRestart = false;
+    
+
     void Start()
     {
+        sprites = Resources.LoadAll<Sprite>("recycle_items");
         Application.targetFrameRate = 60;
         if (isRestart)
         {
             startMenu.SetActive(false);
             Time.timeScale = 1f;
-            createRubbish(99);
+            createRubbish();
         }
         else
         {
@@ -57,7 +74,7 @@ public class GameLogic : MonoBehaviour
         if (!isGameOver)
         {
             time -= Time.deltaTime;
-            re_time -= Time.deltaTime;
+            refresh_time -= Time.deltaTime;
             if (stuck > 0 || time <= 0)
             {
                 pauseMenu.SetActive(true);
@@ -66,11 +83,21 @@ public class GameLogic : MonoBehaviour
             }
             else if (time > 0)
             {
-                if (re_time < 0)
+                if (next_speed_level == 0) 
                 {
-                    createRubbish(i);
-                    re_time = 3.0f;
-                    i++;
+                    speed++;
+                    next_speed_level = 2;
+                    next_refresh -= 0.5f;
+                    if (next_refresh < 1.0f) 
+                    {
+                        next_refresh = 1.0f;
+                    }
+                }
+                if (refresh_time < 0)
+                {
+                    createRubbish();
+                    refresh_time += next_refresh;
+                    
                 }
                 ui_time.text = time.ToString();
                 ui_score.text = score.ToString();
@@ -79,18 +106,42 @@ public class GameLogic : MonoBehaviour
         }
     }
 
-    void createRubbish(int a)
+    void createRubbish()
     {
         Vector3 position = new Vector3(-8.0f, Random.Range(-4.8f, -1.8f), 1);
         GameObject rubbish = Instantiate(rubbish_prefab, position, Quaternion.identity);
+
         AIDestinationSetter ai = rubbish.GetComponent<AIDestinationSetter>();
         ai.target = GameObject.Find("EndPoint").transform;
 
-        int random_seed = Random.Range(0, 3);
-        rubbish.name = "abc" + a.ToString();
-        rubbish.GetComponent<Rubbish>().type = rubbish_type[random_seed];
-        rubbish.GetComponent<SpriteRenderer>().color = rubbish_color[random_seed];
+        AIPath path = rubbish.GetComponent<AIPath>();
+        path.maxSpeed = speed;
+        
+        int random_seed = Random.Range(0, 16);
+        rubbish.name = rubbish_name[random_seed];
+        rubbish.GetComponent<Rubbish>().type = rubbish_type[GetRubbishType(random_seed)];
+        rubbish.GetComponent<SpriteRenderer>().sprite = sprites[random_seed];
 
+    }
+
+    int GetRubbishType(int index) 
+    {
+        if (index >= 0 && index < 3)
+        {
+            return 1;
+        }
+        else if (index >= 3 && index < 6)
+        {
+            return 0;
+        }
+        else if (index >= 6 && index < 13) 
+        {
+            return 1;
+        }
+        else 
+        {
+            return 2;
+        }
     }
 
     public void addWrongResult(string r_name, string r_type)
@@ -104,6 +155,7 @@ public class GameLogic : MonoBehaviour
     public void addScore(int a)
     {
         score += a;
+        next_speed_level--;
     }
 
     public void minScore()
@@ -120,6 +172,7 @@ public class GameLogic : MonoBehaviour
         result.SetActive(false);
         pauseMenu.SetActive(true);
     }
+
     public void reStart()
     {
         isRestart = true;
@@ -148,13 +201,18 @@ public class GameLogic : MonoBehaviour
     {
         startMenu.SetActive(false);
         Time.timeScale = 1f;
-        createRubbish(98);
+        createRubbish();
     }
 
     public void showResult()
     {
         pauseMenu.SetActive(false);
         result.SetActive(true);
+    }
+
+    public void shutDown()
+    {
+        Application.Quit();
     }
 
     string getResult()

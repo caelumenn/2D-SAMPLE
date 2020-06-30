@@ -110,5 +110,4 @@ public class Rubbish : MonoBehaviour
         r2d.gravityScale = 1;
         rubbish_name.enabled = false;
     }
-
 }
