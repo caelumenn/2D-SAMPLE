@@ -18,8 +18,6 @@ public class Rubbish : MonoBehaviour
     AIPath path;
     Rigidbody2D r2d;
 
-    
-     
     void Start()
     {
         game = GameObject.Find("GameLogic").GetComponent<GameLogic>();

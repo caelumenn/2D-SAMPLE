@@ -1,0 +1,25 @@
+tree "Root"
+	while IsStart
+		sequence
+			tree "talk"
+			tree "MoveBin"
+			Wait 2.0
+			
+tree "talk"
+	sequence
+		StartTalking
+		Wait 2.0
+		StopTalking
+		Wait 2.0
+		ChangeDirection
+
+tree "MoveBin"
+	sequence
+		ActivePathFinding
+		SetTarget
+		Move
+		SetDestination
+		Wait 0.5
+		Move
+		DropBin
+

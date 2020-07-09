@@ -83,12 +83,12 @@ public class GameLogic : MonoBehaviour
             }
             else if (time > 0)
             {
-                if (next_speed_level == 0) 
+                if (next_speed_level == 0)
                 {
                     speed++;
                     next_speed_level = 2;
                     next_refresh -= 0.5f;
-                    if (next_refresh < 1.0f) 
+                    if (next_refresh < 1.0f)
                     {
                         next_refresh = 1.0f;
                     }
@@ -97,7 +97,7 @@ public class GameLogic : MonoBehaviour
                 {
                     createRubbish();
                     refresh_time += next_refresh;
-                    
+
                 }
                 ui_time.text = time.ToString();
                 ui_score.text = score.ToString();
@@ -106,7 +106,7 @@ public class GameLogic : MonoBehaviour
         }
     }
 
-    void createRubbish()
+    public void createRubbish()
     {
         Vector3 position = new Vector3(-8.0f, Random.Range(-4.8f, -1.8f), 1);
         GameObject rubbish = Instantiate(rubbish_prefab, position, Quaternion.identity);
