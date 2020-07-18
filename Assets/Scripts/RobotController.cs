@@ -16,6 +16,9 @@ public class RobotController : MonoBehaviour
     bool pathfinding_mode = false;
     bool vertical = false;
     bool holding_trashbin = false;
+    string target = "";
+
+    Vector2 last_frame_pos;
     GameObject trashbin;
     Animator animator;
     AIPath path;
@@ -24,20 +27,22 @@ public class RobotController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        last_frame_pos = transform.position;
         ai = GetComponent<AIDestinationSetter>();
         path = GetComponent<AIPath>();
         animator = GetComponent<Animator>();
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!holding_trashbin && count < 1)
+        if (!holding_trashbin)
         {
-            if (collision.gameObject.tag.Equals("TrashBin"))
+            if (collision.gameObject.name.Equals(target))
             {
                 holding_trashbin = true;
                 trashbin = collision.gameObject;
+                trashbin.GetComponent<BoxCollider2D>().enabled = false;
                 trashbin.transform.parent = this.gameObject.transform;
-                trashbin.transform.position = trashbin.transform.parent.position + new Vector3(1.1f, 0.5f, 0.0f);
+                trashbin.transform.position = trashbin.transform.parent.position + new Vector3(1.1f, 0.0f, 0.0f);
                 count++;
             }
         }
@@ -45,9 +50,10 @@ public class RobotController : MonoBehaviour
 
     void FixedUpdate()
     {
+        Vector2 position = transform.position;
+
         if (!pathfinding_mode)
         {
-            Vector2 position = transform.position;
             if (speed > 0)
             {
                 if (vertical)
@@ -72,7 +78,10 @@ public class RobotController : MonoBehaviour
         }
         else 
         {
-
+            Vector2 offset = position - last_frame_pos;
+            last_frame_pos = transform.position;
+            animator.SetFloat("Move X", offset.x * 10);
+            animator.SetFloat("Move Y", 0);
         }
     }
 
@@ -84,16 +93,16 @@ public class RobotController : MonoBehaviour
         path.canSearch = true;
         path.maxSpeed = speed;
         
-        holding_trashbin = false;
-        count = 0;
         Task.current.Succeed();
     }
 
     [Task]
     void DropBin()
     {
+        target = "";
         holding_trashbin = false;
         trashbin.transform.parent = null;
+        trashbin.GetComponent<BoxCollider2D>().enabled = true;
         pathfinding_mode = false;
         path.canMove = false;
         path.canSearch = false;
@@ -139,22 +148,38 @@ public class RobotController : MonoBehaviour
     [Task]
     void SetTarget() 
     {
-        ai.target = GameObject.Find("TrashBin1" /*Random.Range(1, 4).ToString()*/).transform;
-        Task.current.Succeed();
+        if (ai.target == null)
+        {
+            target = "TrashBin" + Random.Range(1, 4).ToString();
+            Debug.Log(target);
+            ai.target = GameObject.Find(target + "/Offset").transform;
+            Task.current.Succeed();
+        }
+        else
+        {
+            Task.current.Succeed();
+        }
     }  
     [Task]
     void SetDestination() 
     {
-        ai.target = GameObject.Find("Place").transform;
-        Task.current.Succeed();
+        if (count < 4)
+        {
+            ai.target = GameObject.Find("BackGround/Place/" + count.ToString()).transform;
+            Task.current.Succeed();
+        }
+        else 
+        {
+            Task.current.Fail();
+        }
     }
     [Task]
     void Move() 
     {
         if (path.reachedDestination)
         {
+            ai.target = null;
             Task.current.Succeed();
         }
     }
 }
-

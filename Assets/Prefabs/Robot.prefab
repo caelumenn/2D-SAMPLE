@@ -208,8 +208,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6138123857883690944}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 10}
+  m_LocalPosition: {x: 1.334, y: -0.213, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 602664366850698855}
   m_Father: {fileID: 0}
@@ -264,7 +264,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 1
+  m_SpriteSortPoint: 0
 --- !u!95 &3150756853766414452
 Animator:
   serializedVersion: 3
@@ -326,10 +326,10 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.067779064, y: 0.50710964}
+  m_Offset: {x: 0.011076212, y: -0.22899675}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1.7069987, y: 1.7053334}
     newSize: {x: 1.2806249, y: 1.28}
     adaptiveTilingThreshold: 0.5
@@ -337,7 +337,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.057683, y: 1.1366677}
+  m_Size: {x: 1.8918881, y: 1.290134}
   m_EdgeRadius: 0
 --- !u!114 &2148211358217269190
 MonoBehaviour:
@@ -365,8 +365,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 2
-  radius: 0.5
-  height: 2
+  radius: 0.8
+  height: 0.01
   repathRate: 0.5
   canSearch: 1
   canMove: 1
@@ -380,10 +380,10 @@ MonoBehaviour:
   enableRotation: 0
   targetCompatibility: {fileID: 0}
   maxAcceleration: -2.5
-  rotationSpeed: 360
-  slowdownDistance: 1
-  pickNextWaypointDist: 0.2
-  endReachedDistance: 1.3
+  rotationSpeed: 32400
+  slowdownDistance: 0.9
+  pickNextWaypointDist: 2
+  endReachedDistance: 0.8
   alwaysDrawGizmos: 0
   slowWhenNotFacingTarget: 1
   whenCloseToDestination: 0

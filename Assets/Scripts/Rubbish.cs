@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
@@ -33,7 +33,10 @@ public class Rubbish : MonoBehaviour
     {
         if (other.tag.Equals("TrashBin"))
         {
-            if (this.type.Equals(other.GetComponent<TrashBin>().type))
+            string name = other.gameObject.name;
+            int index = Int16.Parse(name.Substring(name.Length - 1)); 
+            
+            if (game.CheckType(this.gameObject.name, index))
             {
                 game.addScore(1);
                 Destroy(gameObject);
@@ -41,7 +44,7 @@ public class Rubbish : MonoBehaviour
             else
             {
                 game.minScore();
-                game.addWrongResult(this.name,this.type);
+                game.addWrongResult(this.name);
                 Destroy(gameObject);
             }
 

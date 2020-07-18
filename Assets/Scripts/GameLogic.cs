@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine.UI;
@@ -8,7 +9,6 @@ using Pathfinding;
 
 public class GameLogic : MonoBehaviour
 {
-
     public Text ui_time;
     public Text ui_score;
     public Text page;
@@ -17,9 +17,6 @@ public class GameLogic : MonoBehaviour
     public GameObject result;
     public GameObject rubbish_prefab;
     
-
-
-
     //For rubbish creat
     Sprite[] sprites;
     string[] rubbish_type = { "card paper", "metal plastic glass", "compost" };
@@ -33,20 +30,19 @@ public class GameLogic : MonoBehaviour
     int current_page = 1;
     OrderedDictionary wrong_result = new OrderedDictionary();
     
-
     //For Game main logic
     public int stuck = 0;
-
     int score = 0;
+
     int speed = 2;
     int next_speed_level = 2;
+
     float time = 60.0f;
     float refresh_time = 1.5f;
     float next_refresh = 3f;
+
     bool isGameOver = false;
-    
     static bool isRestart = false;
-    
 
     void Start()
     {
@@ -108,7 +104,7 @@ public class GameLogic : MonoBehaviour
 
     public void createRubbish()
     {
-        Vector3 position = new Vector3(-8.0f, Random.Range(-4.8f, -1.8f), 1);
+        Vector3 position = new Vector3(-8.0f, UnityEngine.Random.Range(-4.8f, -1.8f), 1);
         GameObject rubbish = Instantiate(rubbish_prefab, position, Quaternion.identity);
 
         AIDestinationSetter ai = rubbish.GetComponent<AIDestinationSetter>();
@@ -117,9 +113,8 @@ public class GameLogic : MonoBehaviour
         AIPath path = rubbish.GetComponent<AIPath>();
         path.maxSpeed = speed;
         
-        int random_seed = Random.Range(0, 16);
+        int random_seed = UnityEngine.Random.Range(0, 16);
         rubbish.name = rubbish_name[random_seed];
-        rubbish.GetComponent<Rubbish>().type = rubbish_type[GetRubbishType(random_seed)];
         rubbish.GetComponent<SpriteRenderer>().sprite = sprites[random_seed];
 
     }
@@ -144,11 +139,18 @@ public class GameLogic : MonoBehaviour
         }
     }
 
-    public void addWrongResult(string r_name, string r_type)
+    public bool CheckType(string name, int index) 
+    {
+        int rubbish_index = Array.IndexOf(rubbish_name, name);
+
+        return GetRubbishType(rubbish_index) == index;
+    }
+
+    public void addWrongResult(string r_name)
     {
         if (!wrong_result.Contains(r_name))
         {
-            wrong_result.Add(r_name, r_type);
+            wrong_result.Add(r_name, rubbish_type[GetRubbishType(Array.IndexOf(rubbish_name, r_name))]);
         }
     }
 
