@@ -8,7 +8,7 @@ public class Rubbish : MonoBehaviour
 {
     GameLogic game;
 
-    public string type;
+    
     Text rubbish_name;
 
     float startPosX;
@@ -82,7 +82,6 @@ public class Rubbish : MonoBehaviour
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
             this.gameObject.transform.localPosition = new Vector3(mousePos.x - startPosX, mousePos.y - startPosY, 0);
-
         }
     }
 

@@ -3,44 +3,53 @@ using System.Collections.Generic;
 using UnityEngine;
 using Panda;
 using Pathfinding;
+using UnityEngine.UI;
 
 public class RobotController : MonoBehaviour
 {
     public GameObject talking_image;
 
     int count = 0;
-    int direction = 1;
 
     float speed = 2.0f;
 
-    bool pathfinding_mode = false;
-    bool vertical = false;
-    bool holding_trashbin = false;
+    bool holding_Trashbin = false, holding_Trash = false;
     string target = "";
 
     Vector2 last_frame_pos;
-    GameObject trashbin;
+
+    GameObject trashbin, trash;
+
     Animator animator;
     AIPath path;
     AIDestinationSetter ai;
 
+    GameLogic game;
+
     // Start is called before the first frame update
     void Start()
     {
+        game = GameObject.Find("GameLogic").GetComponent<GameLogic>();
         last_frame_pos = transform.position;
+
         ai = GetComponent<AIDestinationSetter>();
         path = GetComponent<AIPath>();
+        path.canMove = true;
+        path.canSearch = true;
+        path.maxSpeed = speed;
+
         animator = GetComponent<Animator>();
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!holding_trashbin)
+        if (!holding_Trashbin)
         {
             if (collision.gameObject.name.Equals(target))
             {
-                holding_trashbin = true;
+                holding_Trashbin = true;
                 trashbin = collision.gameObject;
                 trashbin.GetComponent<BoxCollider2D>().enabled = false;
+                GameObject.Find(trashbin.name + "/Canvas/Name").GetComponent<Text>().enabled = false;
                 trashbin.transform.parent = this.gameObject.transform;
                 trashbin.transform.position = trashbin.transform.parent.position + new Vector3(1.1f, 0.0f, 0.0f);
                 count++;
@@ -51,61 +60,21 @@ public class RobotController : MonoBehaviour
     void FixedUpdate()
     {
         Vector2 position = transform.position;
-
-        if (!pathfinding_mode)
-        {
-            if (speed > 0)
-            {
-                if (vertical)
-                {
-                    position.y = position.y + Time.deltaTime * speed * direction;
-                    animator.SetFloat("Move X", 0);
-                    animator.SetFloat("Move Y", direction);
-                }
-                else
-                {
-                    position.x = position.x + Time.deltaTime * speed * direction;
-                    animator.SetFloat("Move X", direction);
-                    animator.SetFloat("Move Y", 0);
-                }
-            }
-            else
-            {
-                animator.SetFloat("Move X", 0);
-                animator.SetFloat("Move Y", 0);
-            }
-            transform.position = position;
-        }
-        else 
-        {
-            Vector2 offset = position - last_frame_pos;
-            last_frame_pos = transform.position;
-            animator.SetFloat("Move X", offset.x * 10);
-            animator.SetFloat("Move Y", 0);
-        }
-    }
-
-    [Task]
-    void ActivePathFinding()
-    {
-        pathfinding_mode = true;
-        path.canMove = true;
-        path.canSearch = true;
-        path.maxSpeed = speed;
-        
-        Task.current.Succeed();
+        Vector2 offset = position - last_frame_pos;
+        last_frame_pos = transform.position;
+        animator.SetFloat("Move X", offset.x * 10);
+        animator.SetFloat("Move Y", offset.y * 10);
     }
 
     [Task]
     void DropBin()
     {
         target = "";
-        holding_trashbin = false;
+        ai.target = null;
+        holding_Trashbin = false;
         trashbin.transform.parent = null;
         trashbin.GetComponent<BoxCollider2D>().enabled = true;
-        pathfinding_mode = false;
-        path.canMove = false;
-        path.canSearch = false;
+        GameObject.Find(trashbin.name + "/Canvas/Name").GetComponent<Text>().enabled = true;
         Task.current.Succeed();
     }
 
@@ -122,13 +91,6 @@ public class RobotController : MonoBehaviour
     {
         talking_image.SetActive(false);
         speed = 2.0f;
-        Task.current.Succeed();
-    }
-
-    [Task]
-    void ChangeDirection() 
-    {
-        direction = -direction;
         Task.current.Succeed();
     }
 
@@ -150,8 +112,7 @@ public class RobotController : MonoBehaviour
     {
         if (ai.target == null)
         {
-            target = "TrashBin" + Random.Range(1, 4).ToString();
-            Debug.Log(target);
+            target = "TrashBin" + Random.Range(0,3).ToString();
             ai.target = GameObject.Find(target + "/Offset").transform;
             Task.current.Succeed();
         }
@@ -159,18 +120,42 @@ public class RobotController : MonoBehaviour
         {
             Task.current.Succeed();
         }
-    }  
+    }
+    
     [Task]
     void SetDestination() 
     {
-        if (count < 4)
+        if (holding_Trashbin)
         {
-            ai.target = GameObject.Find("BackGround/Place/" + count.ToString()).transform;
-            Task.current.Succeed();
+            if (count < 4)
+            {
+                ai.target = GameObject.Find("BackGround/Place/" + count.ToString()).transform;
+                Task.current.Succeed();
+            }
+            else
+            {
+                Task.current.Fail();
+            }
         }
         else 
         {
-            Task.current.Fail();
+            if (ai.target == null)
+            {
+                ai.target = GameObject.Find("BackGround/Place/" + Random.Range(0, 5).ToString()).transform;
+                float distance = Mathf.Abs(ai.target.transform.position.x - this.transform.position.x);
+                if (distance < 1.0f)
+                {
+                    ai.target = null;
+                }
+                else 
+                {
+                    Task.current.Succeed();
+                }
+            }
+            else 
+            { 
+                Task.current.Succeed(); 
+            }
         }
     }
     [Task]
@@ -180,6 +165,46 @@ public class RobotController : MonoBehaviour
         {
             ai.target = null;
             Task.current.Succeed();
+        }
+    }
+
+    [Task]
+    void CreateTrash() 
+    {
+        if (!holding_Trash) 
+        {
+            trash = game.createRubbish();
+            if (trash) 
+            {
+                trash.GetComponent<Rigidbody2D>().gravityScale = 0;
+                trash.GetComponent<AIPath>().canMove = false;
+                trash.GetComponent<AIPath>().canSearch = false;
+                trash.transform.parent = this.gameObject.transform;
+                trash.transform.position = trash.transform.parent.position + new Vector3(1.0f, 0.0f, 0.0f);
+                holding_Trash = true;
+            }
+            Task.current.Succeed();
+        }
+        else 
+        { 
+            Task.current.Succeed(); 
+        }
+    }
+
+    [Task]
+    void DropTrash() 
+    {
+        if (holding_Trash)
+        {
+            trash.transform.parent = null;
+            trash.GetComponent<Rigidbody2D>().gravityScale = 1;
+            holding_Trash = false;
+            ai.target = null;
+            Task.current.Succeed();
+        }
+        else 
+        {
+            Task.current.Fail();
         }
     }
 }

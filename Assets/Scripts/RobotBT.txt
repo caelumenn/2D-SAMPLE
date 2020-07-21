@@ -3,23 +3,36 @@ tree "Root"
 		sequence
 			tree "talk"
 			tree "MoveBin"
-			Wait 2.0
+			tree "ThrowTrash"
 			
 tree "talk"
 	sequence
+		SetDestination
+		Move
+		Wait 0.5
 		StartTalking
 		Wait 2.0
 		StopTalking
-		Wait 2.0
-		ChangeDirection
+		Wait 1.0
 
 tree "MoveBin"
 	sequence
-		ActivePathFinding
 		SetTarget
+		Wait 2.0
 		Move
 		SetDestination
 		Wait 0.5
 		Move
 		DropBin
+		Wait 1.0
+
+tree "ThrowTrash"
+	sequence
+		SetDestination
+		Wait 0.5
+		Move
+		CreateTrash
+		Wait 2.0
+		DropTrash
+		Wait 2.0
 

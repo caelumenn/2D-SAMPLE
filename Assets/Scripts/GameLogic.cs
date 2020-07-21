@@ -44,6 +44,8 @@ public class GameLogic : MonoBehaviour
     bool isGameOver = false;
     static bool isRestart = false;
 
+    int rubbish_Sum = 0;
+
     void Start()
     {
         sprites = Resources.LoadAll<Sprite>("recycle_items");
@@ -71,7 +73,7 @@ public class GameLogic : MonoBehaviour
         {
             time -= Time.deltaTime;
             refresh_time -= Time.deltaTime;
-            if (stuck > 0 || time <= 0)
+            if (stuck > 10 || time <= 0)
             {
                 pauseMenu.SetActive(true);
                 Time.timeScale = 0;
@@ -91,9 +93,10 @@ public class GameLogic : MonoBehaviour
                 }
                 if (refresh_time < 0)
                 {
-                    createRubbish();
-                    refresh_time += next_refresh;
-
+                    if (createRubbish())
+                    {
+                        refresh_time += next_refresh;
+                    }
                 }
                 ui_time.text = time.ToString();
                 ui_score.text = score.ToString();
@@ -102,21 +105,24 @@ public class GameLogic : MonoBehaviour
         }
     }
 
-    public void createRubbish()
+    public GameObject createRubbish()
     {
-        Vector3 position = new Vector3(-8.0f, UnityEngine.Random.Range(-4.8f, -1.8f), 1);
-        GameObject rubbish = Instantiate(rubbish_prefab, position, Quaternion.identity);
-
-        AIDestinationSetter ai = rubbish.GetComponent<AIDestinationSetter>();
-        ai.target = GameObject.Find("EndPoint").transform;
-
-        AIPath path = rubbish.GetComponent<AIPath>();
-        path.maxSpeed = speed;
-        
         int random_seed = UnityEngine.Random.Range(0, 16);
-        rubbish.name = rubbish_name[random_seed];
-        rubbish.GetComponent<SpriteRenderer>().sprite = sprites[random_seed];
+        if (!GameObject.Find(rubbish_name[random_seed]))
+        {
+            Vector3 position = new Vector3(-8.0f, UnityEngine.Random.Range(-4.8f, -1.8f), 1);
+            GameObject rubbish = Instantiate(rubbish_prefab, position, Quaternion.identity);
 
+            AIDestinationSetter ai = rubbish.GetComponent<AIDestinationSetter>();
+            ai.target = GameObject.Find("EndPoint").transform;
+
+            AIPath path = rubbish.GetComponent<AIPath>();
+            path.maxSpeed = speed;
+            rubbish.name = rubbish_name[random_seed];
+            rubbish.GetComponent<SpriteRenderer>().sprite = sprites[random_seed];
+            return rubbish;
+        }
+        return null;
     }
 
     int GetRubbishType(int index) 
