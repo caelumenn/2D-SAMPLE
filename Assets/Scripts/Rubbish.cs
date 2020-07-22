@@ -7,8 +7,9 @@ using UnityEngine.UI;
 public class Rubbish : MonoBehaviour
 {
     GameLogic game;
+    public AudioClip correct;
+    public AudioClip wrong;
 
-    
     Text rubbish_name;
 
     float startPosX;
@@ -39,11 +40,13 @@ public class Rubbish : MonoBehaviour
             if (game.CheckType(this.gameObject.name, index))
             {
                 game.addScore(1);
+                game.PlaySound(correct);
                 Destroy(gameObject);
             }
             else
             {
                 game.minScore();
+                game.PlaySound(wrong);
                 game.addWrongResult(this.name);
                 Destroy(gameObject);
             }

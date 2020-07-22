@@ -40,6 +40,15 @@ public class RobotController : MonoBehaviour
 
         animator = GetComponent<Animator>();
     }
+    private void OnMouseDown()
+    {
+        if (holding_Trash) 
+        {
+            Destroy(trash);
+            holding_Trash = false;
+        }
+    }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (!holding_Trashbin)

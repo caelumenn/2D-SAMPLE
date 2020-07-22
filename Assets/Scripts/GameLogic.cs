@@ -16,7 +16,10 @@ public class GameLogic : MonoBehaviour
     public GameObject startMenu;
     public GameObject result;
     public GameObject rubbish_prefab;
-    
+
+    //For audio
+    AudioSource audioSource;
+
     //For rubbish creat
     Sprite[] sprites;
     string[] rubbish_type = { "card paper", "metal plastic glass", "compost" };
@@ -44,10 +47,9 @@ public class GameLogic : MonoBehaviour
     bool isGameOver = false;
     static bool isRestart = false;
 
-    int rubbish_Sum = 0;
-
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         sprites = Resources.LoadAll<Sprite>("recycle_items");
         Application.targetFrameRate = 60;
         if (isRestart)
@@ -103,6 +105,11 @@ public class GameLogic : MonoBehaviour
 
             }
         }
+    }
+
+    public void PlaySound(AudioClip clip) 
+    {
+        audioSource.PlayOneShot(clip);
     }
 
     public GameObject createRubbish()

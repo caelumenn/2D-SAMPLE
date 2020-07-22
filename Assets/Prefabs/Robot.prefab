@@ -192,6 +192,7 @@ GameObject:
   - component: {fileID: 403591328}
   - component: {fileID: 403591329}
   - component: {fileID: 5300464778438715759}
+  - component: {fileID: 107647729}
   m_Layer: 0
   m_Name: Robot
   m_TagString: Untagged
@@ -304,10 +305,10 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.011076212, y: -0.22899675}
+  m_Offset: {x: -0.0051686764, y: -0.09903574}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0.35}
     oldSize: {x: 1.7069987, y: 1.7053334}
     newSize: {x: 1.2806249, y: 1.28}
     adaptiveTilingThreshold: 0.5
@@ -315,7 +316,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.8918881, y: 1.290134}
+  m_Size: {x: 1.9243779, y: 1.0302119}
   m_EdgeRadius: 0
 --- !u!114 &2148211358217269190
 MonoBehaviour:
@@ -430,6 +431,27 @@ MonoBehaviour:
     breakPointStatuses: 
     collapsedLines: 
     btScript: 
+--- !u!50 &107647729
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6138123857883690944}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
 --- !u!1 &7598903488332571213
 GameObject:
   m_ObjectHideFlags: 0
