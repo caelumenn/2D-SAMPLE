@@ -9,6 +9,7 @@ TagManager:
   - Rubbish
   - TrashBin
   - End
+  - Robot
   layers:
   - Default
   - TransparentFX

@@ -39,15 +39,15 @@ public class Rubbish : MonoBehaviour
             
             if (game.CheckType(this.gameObject.name, index))
             {
-                game.addScore(1);
+                game.AddScore(1);
                 game.PlaySound(correct);
                 Destroy(gameObject);
             }
             else
             {
-                game.minScore();
+                game.MinScore();
                 game.PlaySound(wrong);
-                game.addWrongResult(this.name);
+                game.AddWrongResult(this.name);
                 Destroy(gameObject);
             }
 
@@ -75,10 +75,10 @@ public class Rubbish : MonoBehaviour
             GetComponent<BoxCollider2D>().isTrigger = false;
         }
     }
- 
+
     void Update()
     {
-        if (isBeingHeld) 
+        if (isBeingHeld)
         {
             Vector3 mousePos;
             mousePos = Input.mousePosition;

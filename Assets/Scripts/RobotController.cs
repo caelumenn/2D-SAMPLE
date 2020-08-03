@@ -182,7 +182,7 @@ public class RobotController : MonoBehaviour
     {
         if (!holding_Trash) 
         {
-            trash = game.createRubbish();
+            trash = game.CreateRubbish();
             if (trash) 
             {
                 trash.GetComponent<Rigidbody2D>().gravityScale = 0;

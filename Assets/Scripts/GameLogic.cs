@@ -9,8 +9,9 @@ using Pathfinding;
 
 public class GameLogic : MonoBehaviour
 {
-    public Text ui_time;
-    public Text ui_score;
+    public Text ui_Time;
+    public Text ui_Score;
+    public Text ui_Life;
     public Text page;
     public GameObject pauseMenu;
     public GameObject startMenu;
@@ -44,7 +45,7 @@ public class GameLogic : MonoBehaviour
     float refresh_time = 1.5f;
     float next_refresh = 3f;
 
-    bool isGameOver = false;
+    public bool isGameOver = false;
     static bool isRestart = false;
 
     void Start()
@@ -56,7 +57,7 @@ public class GameLogic : MonoBehaviour
         {
             startMenu.SetActive(false);
             Time.timeScale = 1f;
-            createRubbish();
+            CreateRubbish();
         }
         else
         {
@@ -68,18 +69,26 @@ public class GameLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        result.GetComponent<Text>().text = getResult();
-        page.text = current_page.ToString() +"/"+getAllPage().ToString();
+        result.GetComponent<Text>().text = GetResult();
+        page.text = current_page.ToString() +"/"+GetAllPage().ToString();
 
         if (!isGameOver)
         {
             time -= Time.deltaTime;
             refresh_time -= Time.deltaTime;
-            if (stuck > 10 || time <= 0)
+
+            ui_Time.text = time.ToString();
+            ui_Score.text = score.ToString();
+            ui_Life.text = (5 - stuck).ToString();
+
+            if (stuck > 4 || time <= 0)
             {
+                isGameOver = true;
                 pauseMenu.SetActive(true);
                 Time.timeScale = 0;
-                isGameOver = true;
+                DestroyAll("Rubbish");
+                DestroyAll("Robot");
+                DestroyAll("TrashBin");
             }
             else if (time > 0)
             {
@@ -95,13 +104,12 @@ public class GameLogic : MonoBehaviour
                 }
                 if (refresh_time < 0)
                 {
-                    if (createRubbish())
+                    if (CreateRubbish())
                     {
                         refresh_time += next_refresh;
                     }
                 }
-                ui_time.text = time.ToString();
-                ui_score.text = score.ToString();
+                
 
             }
         }
@@ -112,12 +120,18 @@ public class GameLogic : MonoBehaviour
         audioSource.PlayOneShot(clip);
     }
 
-    public GameObject createRubbish()
+    Vector3 RandomPos() 
+    {
+        Vector3 pos = GameObject.Find("BackGround/StartPoint/" + UnityEngine.Random.Range(0, 2).ToString()).transform.position;
+        return pos;
+    }
+
+    public GameObject CreateRubbish()
     {
         int random_seed = UnityEngine.Random.Range(0, 16);
         if (!GameObject.Find(rubbish_name[random_seed]))
         {
-            Vector3 position = new Vector3(-8.0f, UnityEngine.Random.Range(-4.8f, -1.8f), 1);
+            Vector3 position = RandomPos();
             GameObject rubbish = Instantiate(rubbish_prefab, position, Quaternion.identity);
 
             AIDestinationSetter ai = rubbish.GetComponent<AIDestinationSetter>();
@@ -159,7 +173,7 @@ public class GameLogic : MonoBehaviour
         return GetRubbishType(rubbish_index) == index;
     }
 
-    public void addWrongResult(string r_name)
+    public void AddWrongResult(string r_name)
     {
         if (!wrong_result.Contains(r_name))
         {
@@ -167,13 +181,13 @@ public class GameLogic : MonoBehaviour
         }
     }
 
-    public void addScore(int a)
+    public void AddScore(int a)
     {
         score += a;
         next_speed_level--;
     }
 
-    public void minScore()
+    public void MinScore()
     {
         score--;
         if (score < 0)
@@ -182,28 +196,28 @@ public class GameLogic : MonoBehaviour
         }
     }
 
-    public void returnToPause() 
+    public void ReturnToPause() 
     {
         result.SetActive(false);
         pauseMenu.SetActive(true);
     }
 
-    public void reStart()
+    public void ReStart()
     {
         isRestart = true;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void nextPage() 
+    public void NextPage() 
     {
         current_page++;
-        if (current_page > getAllPage())
+        if (current_page > GetAllPage())
         {
-            current_page = getAllPage();
+            current_page = GetAllPage();
         }
     }
 
-    public void prePage() 
+    public void PrePage() 
     {
         current_page--;
         if (current_page < 1)
@@ -212,25 +226,25 @@ public class GameLogic : MonoBehaviour
         }
     }
 
-    public void startGame()
+    public void StartGame()
     {
         startMenu.SetActive(false);
         Time.timeScale = 1f;
-        createRubbish();
+        CreateRubbish();
     }
 
-    public void showResult()
+    public void ShowResult()
     {
         pauseMenu.SetActive(false);
         result.SetActive(true);
     }
 
-    public void shutDown()
+    public void ShutDown()
     {
         Application.Quit();
     }
 
-    string getResult()
+    string GetResult()
     {
         string s_result = "You have gain " + score.ToString() + " marks,\n" +
             "and here is the list of rubbishes you put in the wrong bin.\n";
@@ -240,7 +254,7 @@ public class GameLogic : MonoBehaviour
         wrong_result.Values.CopyTo(values, 0);
 
 
-        if (current_page < getAllPage())
+        if (current_page < GetAllPage())
         {
             for (int i = (current_page - 1) * 10; i <= current_page * 10 - 1; i++)
             {
@@ -259,8 +273,17 @@ public class GameLogic : MonoBehaviour
         return s_result;
     }
 
-    int getAllPage() 
+    int GetAllPage() 
     {
         return (wrong_result.Count / 10) + 1;
+    }
+
+    void DestroyAll(string tag)
+    {
+        GameObject[] objects = GameObject.FindGameObjectsWithTag(tag);
+        for (int i = 0; i < objects.Length; i++)
+        {
+            GameObject.Destroy(objects[i]);
+        }
     }
 }
