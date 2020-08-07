@@ -15,6 +15,7 @@ public class Rubbish : MonoBehaviour
     float startPosX;
     float startPosY;
     bool isBeingHeld = false;
+    bool isOnceFall = false;
 
     AIPath path;
     Rigidbody2D r2d;
@@ -61,9 +62,19 @@ public class Rubbish : MonoBehaviour
         }
         else if (other.tag.Equals("Street"))
         {
-            path.canMove = false;
-            path.canSearch = false;
-            GetComponent<BoxCollider2D>().isTrigger = false;
+            if (!isOnceFall)
+            {
+                path.canMove = false;
+                path.canSearch = false;
+                GetComponent<BoxCollider2D>().isTrigger = false;
+                isOnceFall = true;
+            }
+            else 
+            {
+                Destroy(gameObject);
+                game.MinScore();
+                game.PlaySound(wrong);
+            }
         }
         else if (other.tag.Equals("End")) 
         {
